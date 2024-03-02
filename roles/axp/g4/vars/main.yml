@@ -9,14 +9,14 @@ extendrom_debug_path_size_kernel_default: 100
 extendrom_debug_path_size_selinux_default: 200
 extendrom_debug_path_size_crash_default: 200
 
+# TEMP until ported to A11:
+extendrom_signature_spoofing: "false"
+
 # special G4 manifest branch
 git_repo_local_manifests_branch: "{{ ROM_FLAVOR }}-{{ android_shortversion }}_g4"
 
 # path to the kernel dir (req for e.g. wireguard)
 target_kernel_dir: kernel/lge/msm8992
-
-# set output dir to sub model (specific g4 use case - this overwrites roles/common)
-JKZIPDIR: "/ssd/tmp/{{ ROM_FLAVOR }}/zips/{{ sub_model }}"
 
 # common defaults override:
 rempath: "/home/nightlies/roms/{{ ROM_FLAVOR }}/{{ sub_model }}/"
@@ -24,14 +24,17 @@ post_cleanup_product_override: "{{ SEPARATE_OUT_DIR }}/target/product/{{ sub_mod
 vbmeta_verify: false
 
 # enable kernel patching
-#divest_unsupported_device: true
+# this kernel is special bc it (still) exists in Fix_CVE_Patchers.sh (they supported it a while ago)
+# but as they removed the patcher script we need to set it to unsupported:
+divest_unsupported_device: true
+unsupported_device_kernel_patch: true
 
 # defaults override (notify):
 device_cl: |-
   ***{{ target_model_full }}*** ***\({{ sub_model | replace("-","\-") | replace("_","\_") }}\)*** \- ***{{ ROM_FLAVOR }} {{ android_shortversion }}***
 
 dl_links: |-
-  ***Download:*** [{{ ROMFILE.stdout | replace("-","\-") | replace("_","\_") | replace(".","\.") }} ]({{ leech_server }}/e-os/{{ android_shortversion }}/{{ sub_model }})
+  ***Download:*** [{{ ROMFILE.stdout | replace("-","\-") | replace("_","\_") | replace(".","\.") }} ]({{ leech_server }}/axp/{{ sub_model }})
 
 dtree_cl: |-
   \- device tree: [commits](https://github.com/LGgFour/android_device_lge_g4/commits/{{ ROM_FLAVOR }}-{{ android_shortversion }})
