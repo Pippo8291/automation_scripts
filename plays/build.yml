@@ -9,6 +9,7 @@
         msg: "{{ semaphore_vars }}"
 
     - name: ensure semaphore run dir
+      connection: local
       file:
         path: "{{ semaphore_lock_dir }}"
         state: directory
