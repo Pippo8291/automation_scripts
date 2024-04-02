@@ -15,6 +15,11 @@
 
 - block:
 
+  - name: Fetch build log
+    fetch:
+      src: "{{ BUILD_LOG }}"
+      dest: /tmp/
+
   - stat:
       path: "/tmp/{{ inventory_hostname }}/{{ build_log_name }}"
     register: buildlogfile
