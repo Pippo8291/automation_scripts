@@ -1,0 +1,6 @@
+---
+
+- name: "clean all device trees"
+  file:
+    path: "{{ SRCPATH }}/device/"
+    state: absent

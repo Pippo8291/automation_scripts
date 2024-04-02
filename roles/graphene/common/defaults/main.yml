@@ -126,10 +126,16 @@ SH_GRAPHENE_BUILD: |
       export BUILD_ID="{{ ROM_NAME }}_v{{ ROM_VERSION }}-{{ ROM_TYPE }}"
 
       # replace aosp build id
-      sed -i "s/BUILD_ID :=.*/BUILD_ID := $BUILD_ID/g" build/make/core/version_defaults.mk
+      if [ -f build/make/core/version_defaults.mk ]; then
+          sed -i "s/BUILD_ID :=.*/BUILD_ID := $BUILD_ID/g" build/make/core/version_defaults.mk
+      fi
+      if [ -f build/make/core/version_util.mk ];then
+          sed -i "s/BUILD_ID :=.*/BUILD_ID := $BUILD_ID/g" build/make/core/version_util.mk
+      fi
       echo "ro.build.display.id=$BUILD_ID" > vendor/sos/vendor.prop
 
-      source script/envsetup.sh
+      export TARGET_RELEASE=ap1a
+      source script/envsetup.sh || source build/envsetup.sh
       {% if DOWNLOAD_BLOBS is defined and  DOWNLOAD_BLOBS == "true" %}
       # fetch & extract blobs
       yarn install --cwd vendor/adevtool/
@@ -173,7 +179,8 @@ SH_GRAPHENE_BUILD: |
 
       # build
       cd {{ SRCPATH }}
-      choosecombo release {{ target_model }} {{ lunch_buildtype }}
+      # choosecombo release {{ target_model }} {{ lunch_buildtype }}
+      lunch {{ target_model }}-ap1a-{{ lunch_buildtype }}
       m -j{{ max_processes }} {{ graphene_build_targets }}
 
       # packaging & signing
