@@ -45,7 +45,7 @@
   args:
     executable: /bin/bash
     chdir: "{{ SRCPATH }}"
-  async: 39600
+  async: 89600
   poll: 30
   register: buildresult
   ignore_errors: true
