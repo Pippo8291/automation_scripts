@@ -41,7 +41,8 @@
 
 - name: "Building: {{ BDEVICE }} - {{ ROM_FLAVOR }}"
   shell: >
-     source {{ BUILDHOME }}/build_{{ target_model }}_{{ android_shortversion }}_{{ ROM_FLAVOR }}.sh >> {{ BUILD_LOG }} 2>&1
+     echo "Build..."
+     # source {{ BUILDHOME }}/build_{{ target_model }}_{{ android_shortversion }}_{{ ROM_FLAVOR }}.sh >> {{ BUILD_LOG }} 2>&1
   args:
     executable: /bin/bash
     chdir: "{{ SRCPATH }}"
