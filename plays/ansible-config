@@ -1,0 +1,23 @@
+---
+
+- name: "Testing stuff"
+  hosts: buildserver
+  gather_facts: false
+      
+  tasks:
+
+    - ansible.builtin.setup:
+        filter:
+          - ansible_date_time
+      
+    - debug:
+        var: ansible_config_file
+  
+    - debug:
+        var: semaphore_vars
+        
+    - import_role:
+        name: common
+
+    - debug:
+         var: git_repo_main_manifests
