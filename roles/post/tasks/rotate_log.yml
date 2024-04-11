@@ -20,7 +20,7 @@
   #    src: "{{ BUILD_LOG }}"
   #    dest: /tmp/
   - name: copy log to tmp-folder 
-    shell: "rsync -a {{ BUILD_LOG }} /tmp/semaphore/"
+    shell: "mv {{ BUILD_LOG }} /home/semaphore/logs/"
 
   - stat:
       path: "/tmp/{{ inventory_hostname }}/{{ build_log_name }}"
