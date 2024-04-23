@@ -15,7 +15,7 @@
   when: skip_wireguard is defined and skip_wireguard | bool
 
 - name: "apply DOS kernel patches (unsupported DOS devices)"
-  raw: |
+  shell: |
     {{ DOS_INIT }}
     CROOT="{{ SRCPATH }}"
     set +e
@@ -36,39 +36,22 @@
     - unsupported_device_kernel_patch | bool
 
 - name: "apply DOS patches"
-  raw: |
-    {{ DOS_INIT }}
-
-    # tensor need additional fixups
-    if [ -f "{{ DOSPATH }}/Patches/LineageOS-{{ los_version }}/android/0001-tensor.patch" ];then
-      cd {{ SRCPATH }}/.repo/manifests && git am {{ DOSPATH }}/Patches/LineageOS-{{ los_version }}/android/0001-tensor.patch; cd {{ SRCPATH }}
-      PIXELDIRS=$(grep -o "name=.*" .repo/manifests/snippets/pixel.xml |cut -d '"' -f2 | tr '\n' ' ')
-      {{ repo_bin }} sync --jobs-checkout={{ max_processes }} --jobs-network={{ max_processes_sync }} {{ repo_sync_args }} $PIXELDIRS
-    fi
-    
-    patchWorkspaceReal >> {{ BUILD_LOG }} 2>&1 \
-      && awk -i inplace '!/enforce-product-packages-exist-internal/' vendor/lineage/config/common.mk
-  register: patchout
-  args:
-    executable: /bin/bash
-  when: disabledblock is defined
-
-- name: "apply DOS patches (shell)"
   shell: |
-    {{ DOS_INIT }}
-
     # tensor need additional fixups
     if [ -f "{{ DOSPATH }}/Patches/LineageOS-{{ los_version }}/android/0001-tensor.patch" ];then
       cd {{ SRCPATH }}/.repo/manifests && git am {{ DOSPATH }}/Patches/LineageOS-{{ los_version }}/android/0001-tensor.patch; cd {{ SRCPATH }}
       PIXELDIRS=$(grep -o "name=.*" .repo/manifests/snippets/pixel.xml |cut -d '"' -f2 | tr '\n' ' ')
       {{ repo_bin }} sync --jobs-checkout={{ max_processes }} --jobs-network={{ max_processes_sync }} {{ repo_sync_args }} $PIXELDIRS
     fi
-    
-    patchWorkspaceReal >> {{ BUILD_LOG }} 2>&1 \
-      && awk -i inplace '!/enforce-product-packages-exist-internal/' vendor/lineage/config/common.mk
+    # start divest patcher
+    {{ DOS_INIT }}
+    patchWorkspaceReal >> {{ BUILD_LOG }} 2>&1
+    resetEnv
+    awk -i inplace '!/enforce-product-packages-exist-internal/' vendor/lineage/config/common.mk
   register: patchout
   args:
     executable: /bin/bash
+    chdir: "{{ SRCPATH }}"
 
 - name: "Logo: overlay workaround"   
   shell: cp vendor/axp/overlays/packages/apps/SetupWizard/res/drawable/logo.xml vendor/divested/overlay/common/packages/apps/SetupWizard/res/drawable/logo.xml
@@ -79,7 +62,7 @@
 
 # AXP.OS adjustments (e.g wireguard, OTA,..)
 - name: "apply AXP.OS adjustments"
-  raw: |
+  shell: |
     {{ DOS_INIT }}
     {% if sub_model is defined %}
     lunch lineage_{{ sub_model }}-user && echo lunch success
@@ -89,10 +72,13 @@
     vendor/axp/axp.sh
   args:
     executable: /bin/bash
+    chdir: "{{ SRCPATH }}"
 
 - name: "apply AXP.OS patches (common)"
-  raw: |
+  shell: |
       {{ DOS_INIT }}
+      resetEnv
       {{ SRCPATH }}/vendor/extendrom/tools/apply_patches.sh {{ SRCPATH }}/vendor/axp/patches/common/{{ android_shortversion }}
   args:
     executable: /bin/bash
+    chdir: "{{ SRCPATH }}"
