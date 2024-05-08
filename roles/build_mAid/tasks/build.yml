@@ -1,5 +1,5 @@
 ---
-
+ 
 - name: "mAid build info"
   debug:
     msg: |
@@ -20,6 +20,7 @@
       __________________________________________________
    
 - name: "clean-up"
+  become: no
   shell: "sudo rm -rf {{ maid_build_path }}/mAid_work"
   ignore_errors: yes
   when: not skip_clean_build | bool
@@ -27,6 +28,7 @@
   no_log: true
 
 - name: "check mAid hook"
+  become: no
   lineinfile:
     path: /usr/bin/buildiso
     regexp: ^import /home/jenkins/build_maid/mAid.func
@@ -48,6 +50,7 @@
   when: (maid_hook is changed) or (maid_hook is failed)
 
 - name: "Starting mAid build"
+  become: no
   debug:
     msg: |
       __________________________________________________
@@ -57,6 +60,7 @@
       __________________________________________________
 
 - name: "mAid build process"
+  become: no
   shell: >
     buildiso \
       -k {{ maid_kernel }} \
@@ -85,6 +89,7 @@
   delegate_to: "{{ groups.buildserver[0] }}"
 
 - name: Fetch build logs
+  become: no
   fetch:
     flat: true
     src: "{{ item }}"
