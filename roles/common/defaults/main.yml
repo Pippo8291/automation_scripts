@@ -18,7 +18,7 @@ ansible_home_dir: "{{ semaphore_work_dir }}"
 parsed_target_version: "{{ git_repo_main_branch | regex_replace('.*/','') | regex_replace('^v','') }}"
 normalized_target_version: "{{ parsed_target_version | regex_replace('(\\d+)\\.(\\d+)(.*)','\\1.\\2') }}"
 # just the integer of the given android version
-android_version_int: "{{ android_shortversion | replace('a','') | replace('A','') }} | int"
+android_version_int: "{{ android_shortversion | replace('a','') | replace('A','') }}"
 
 # normalize current date (used in several places later
 current_year: "{{ ansible_date_time.year }}"
@@ -186,7 +186,7 @@ incompat_cross_version_paths_DISABLED:
 #topic:P_asb_2022-03 OR # merged officially!
 #topic:P_asb_2022-04 OR # merged officially!
 # e.g.: https://review.lineageos.org/q/topic:P_asb_2024-02
-SECPATCH_DATE_PIE: "2024-05"
+SECPATCH_DATE_PIE: "2024-07"
 sec_patch_topics_pie:
       - topic:P_asb_2022-05
       - topic:P_asb_2022-06
@@ -212,4 +212,6 @@ sec_patch_topics_pie:
       - topic:P_asb_2024-02
       - topic:P_asb_2024-03
       - topic:P_asb_2024-04
+      - topic:P_asb_2024-05
+      - topic:P_asb_2024-06
       - topic:P_asb_{{ SECPATCH_DATE_PIE }}
