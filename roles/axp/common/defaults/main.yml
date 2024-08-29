@@ -7,11 +7,27 @@ git_repo_local_manifests: "https://github.com/AXP-OS/manifest.git"
 git_repo_local_manifests_branch: "{{ ROM_FLAVOR }}-{{ android_shortversion }}"
 # main LOS manifest
 git_repo_main_manifests: "https://github.com/LineageOS/android.git"
+# install tea cli: wget https://dl.gitea.com/tea/main/tea-main-linux-amd64 -O ~/.local/bin/tea && chmod +x ~/.local/bin/tea
+# create token for a bot user. must have at least these permissions: write:organization, write:repository, read:user
+# login once: tea login add --name repocr --url https://code.binbash.rocks:8443 --token xxxxx
+# the login name used in "tea login add" command
+gitea_login_name: repocr
+# the organization name within git(ea):
+git_axpos_org_name: "AXP.OS"
+# just push changes after patching, skip build
+just_git_push: False
+# private git URI (incl org) for creating/updating repos for AXP.OS
+git_axpos_org_private: "ssh://git@code.binbash.rocks:22443/{{ git_axpos_org_name }}"
+# list of private repos within the AXP.OS org
+# reasons for listing them here are e.g. they get rejected on github, containing proprietary stuff or sim.
+# comma separated list:
+git_private_repos: "platform_prebuilts_tools"
 
 # build vars
-os_name: "AXP.OS" 
-los_version: "{{ android_shortversion | replace('a13','20.0') | replace('a12','19.1') | replace('a11','18.1') | replace('a10','17.1') | replace('a9','16.0') }}"
-git_repo_main_branch: "lineage-{{ los_version }}"
+os_name: "AXP.OS"
+#los_version: "{{ android_shortversion | replace('a13','20.0') | replace('a12','19.1') | replace('a11','18.1') | replace('a10','17.1') | replace('a9','16.0') }}"
+#git_repo_main_branch: "lineage-{{ los_version }}"
+git_repo_main_branch: "{{ los_version_gitbranch }}"
 DOSPATH: "/home/androidsource/do-not-touch/{{ ROM_FLAVOR }}"
 # SRCPATH HAS TO be part of DOSPATH - this is a divestOS limitation and cannot be changed
 # If you need to use a different path for any reason you can use symlinks for the "LineageOS-XX" folders
@@ -43,8 +59,6 @@ axp_clean_paths:
     - "{{ SRCPATH }}/external/firebase-messaging"
     - "{{ SRCPATH }}/kernel"
     - "{{ SRCPATH }}/device"
-# just push changes after patching, skip build
-just_git_push: False
 
 # kernel patching
 divest_cve_checker_download: "https://gitlab.com/divested-mobile/cve_checker/-/jobs/4820813129/artifacts/raw/build/libs/cve_checker-0.6.8.jar?inline=false"
@@ -54,7 +68,8 @@ unsupported_device_kernel_patch: true    # enable kernel patching by default, ov
 
 # extendrom stuff
 use_extendrom: "true"
-extendrom_package_list_default: "additional_repos.xml Phonesky_AXP-OS Magisk AuroraStore MicrogGmsCore_GH GsfProxy_GH noeSpeakNG NeoLauncher-latest"
+extendrom_package_list_default: "Phonesky_AXP-OS additional_repos.xml Magisk AuroraStore MicrogGmsCore_GH GsfProxy_GH noeSpeakNG NeoLauncher-latest"
+#extendrom_package_list_default: "Phonesky_AXP-OS_testing additional_repos.xml Magisk AuroraStore MicrogGmsCore_GH GsfProxy_GH noeSpeakNG NeoLauncher-latest"
 extendrom_fdroid_repos: "molly.xml nailyk.xml threema.xml futo_org.xml"
 extendrom_preroot_boot: "true"
 extendrom_signature_spoofing: "true"
